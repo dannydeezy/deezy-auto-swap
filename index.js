@@ -194,7 +194,7 @@ async function run() {
     clearTimeout(killProcessTimeout)
     if (!paymentResult || !paymentResult.confirmed_at) return
 
-    const feePpm = Math.round(paymentResult.safe_fee * 1000000 / amountSats)
+    const feePpm = Math.round(paymentResult.safe_fee * 1000000 / SWAP_AMOUNT_SATS)
     console.log(`Payment confirmed, with fee ${paymentResult.safe_fee} satoshis, and ppm ${feePpm}`)
     const outNode = await getNode({ lnd, public_key: paymentResult.hops[0].public_key })
     console.log(`Out node: ${outNode.alias}\n\n\n`)
