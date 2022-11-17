@@ -3,6 +3,7 @@ const {
     pay,
     getNode,
     createChainAddress,
+    getChainFeeEstimate,
     decodePaymentRequest
 } = require('ln-service')
 const {
