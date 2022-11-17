@@ -198,6 +198,9 @@ async function run() {
     console.log(`Payment confirmed, with fee ${paymentResult.safe_fee} satoshis, and ppm ${feePpm}`)
     const outNode = await getNode({ lnd, public_key: paymentResult.hops[0].public_key })
     console.log(`Out node: ${outNode.alias}\n\n\n`)
+    currentInvoice = null
+    currentInvoiceAttempts = 0
+    currentMaxRoutingFeeSats = null
 }
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
