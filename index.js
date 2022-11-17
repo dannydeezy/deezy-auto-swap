@@ -176,7 +176,7 @@ async function run() {
     // Sometimes LND can hang indefinitely on the payment attempt, long past the payment timeout.
     // If it hangs for longer than twice the pathfinding timeout, we kill the process. Note that the payment
     // may succeed or fail. If the payment succeeds then the swap will go through.
-    const killProcessTimeout = setTimeout(abortMission, Math.round(PATHFINDING_TIMEOUT_SECONDS * 2))
+    const killProcessTimeout = setTimeout(abortMission, Math.round(PATHFINDING_TIMEOUT_SECONDS * 1000 * 2))
     const paymentResult = await pay(
         {
             lnd,
