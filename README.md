@@ -1,5 +1,5 @@
 # deezy-auto-swap
-automatically swap lightning btc for on-chain btc with deezy
+automatically swap lightning btc for on-chain btc with deezy. run this continuously to opportunistically find low-fee paths to swap out with, ensuring you always acquire the least expensive inbound liquidity from deezy.
 
 ## setup
 ```
