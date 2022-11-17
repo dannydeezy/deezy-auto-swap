@@ -36,6 +36,7 @@ const MAX_FAILED_ATTEMPTS_PER_INVOICE = 30
 // If we fail to pay a swap invoice, we will save it and keep trying until it expires
 // so that we don't create a bunch of unnecessary unused invoices :)
 let currentInvoice = null
+let currentMaxRoutingFeeSats = null
 let currentInvoiceAttempts = 0
 
 /**
@@ -139,7 +140,8 @@ async function prepareSwap({ deezySwapInfo }) {
     } = swapDetails
     return {
         bolt11_invoice,
-        address
+        address,
+        maxRoutingFeeSats
     }
 }
 
@@ -158,12 +160,13 @@ async function run() {
     console.log(`Got deezy swap info: ${JSON.stringify(deezySwapInfo)}`)
     if (!currentInvoice || !address || currentInvoiceAttempts > MAX_FAILED_ATTEMPTS_PER_INVOICE) {
         console.log(`Getting new address and invoice`)
-        const invoiceAndAddress = await prepareSwap({ deezySwapInfo })
-        if (!invoiceAndAddress) return
+        const preparedSwapInfo = await prepareSwap({ deezySwapInfo })
+        if (!preparedSwapInfo) return
 
         // TODO: validate the invoice with ln-service's decodePaymentRequest
-        currentInvoice = invoiceAndAddress.bolt11_invoice
-        address = invoiceAndAddress.address
+        currentInvoice = preparedSwapInfo.bolt11_invoice
+        address = preparedSwapInfo.address
+        currentMaxRoutingFeeSats = preparedSwapInfo.maxRoutingFeeSats
         currentInvoiceAttempts = 0
     }
     console.log(`Attempt ${currentInvoiceAttempts} for address ${address} and invoice ${currentInvoice}`)
@@ -179,7 +182,7 @@ async function run() {
             lnd,
             request: currentInvoice,
             outgoing_channels: outgoingChannels.length > 0 ? outgoingChannels.map(channel => channel.id) : undefined,
-            max_fee: maxRoutingFeeSats,
+            max_fee: currentMaxRoutingFeeSats,
             pathfinding_timeout: PATHFINDING_TIMEOUT_SECONDS,
         }
     ).catch(err => {
