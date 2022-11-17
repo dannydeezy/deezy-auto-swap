@@ -133,6 +133,7 @@ async function prepareSwap({ deezySwapInfo }) {
         on_chain_sats_per_vbyte: onChainFeeRateSatsPerVbyte
     })
     if (!swapDetails) return null
+    console.log(swapDetails)
     const {
         bolt11_invoice,
     } = swapDetails
