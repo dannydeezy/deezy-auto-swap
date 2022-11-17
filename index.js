@@ -154,7 +154,7 @@ async function run() {
     const deezySwapInfo = await getAndCheckSwapInfo()
     if (!deezySwapInfo) return
 
-    console.log(`Got deezy swap info`)
+    console.log(`Got deezy swap info: ${JSON.stringify(deezySwapInfo)}`)
     if (!currentInvoice || !address || currentInvoiceAttempts > MAX_FAILED_ATTEMPTS_PER_INVOICE) {
         console.log(`Getting new address and invoice`)
         const invoiceAndAddress = await prepareSwap({ deezySwapInfo })
