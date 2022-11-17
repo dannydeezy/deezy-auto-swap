@@ -30,7 +30,7 @@ if (config.SWAP_CHAIN_SATS_PER_VBYTE && config.SWAP_CHAIN_TARGET_CONFIRMATIONS) 
     throw new Error('Cannot specify both SWAP_CHAIN_SATS_PER_VBYTE and SWAP_CHAIN_TARGET_CONFIRMATIONS')
 }
 const DEFAULT_SWAP_CHAIN_TARGET_CONFIRMATIONS = 144
-const MAX_FAILED_ATTEMPTS_PER_INVOICE = 100
+const MAX_FAILED_ATTEMPTS_PER_INVOICE = 30
 
 // If we fail to pay a swap invoice, we will save it and keep trying until it expires
 // so that we don't create a bunch of unnecessary unused invoices :)
