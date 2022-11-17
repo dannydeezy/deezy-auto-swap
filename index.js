@@ -162,7 +162,7 @@ async function run() {
         if (!invoiceAndAddress) return
 
         // TODO: validate the invoice with ln-service's decodePaymentRequest
-        currentInvoice = invoiceAndAddress.invoice
+        currentInvoice = invoiceAndAddress.bolt11_invoice
         address = invoiceAndAddress.address
         currentInvoiceAttempts = 0
     }
