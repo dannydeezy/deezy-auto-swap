@@ -4,7 +4,7 @@ const {
     getNode,
     createChainAddress,
     decodePaymentRequest
-} = require('./ln-service')
+} = require('ln-service')
 const {
     lnd
 } = require('./lnd')
