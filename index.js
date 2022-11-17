@@ -187,7 +187,7 @@ async function run() {
         }
     ).catch(err => {
         console.error(err)
-        console.log(`Failed to pay invoice ${invoice}`)
+        console.log(`Failed to pay invoice ${currentInvoice}`)
         return null
     })
     clearTimeout(killProcessTimeout)
