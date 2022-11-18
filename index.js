@@ -5,6 +5,7 @@ const {
     createChainAddress,
     getChainFeeEstimate,
     getChannelBalance,
+    getUtxos,
     decodePaymentRequest
 } = require('ln-service')
 const {
@@ -63,7 +64,7 @@ async function selectChannels() {
 }
 
 async function getChainBalanceSats() {
-    const { utxos } = await lnService.getUtxos({ lnd, min_confirmations: 0 })
+    const { utxos } = await getUtxos({ lnd, min_confirmations: 0 })
     const utxoSumSats = utxos.reduce((acc, utxo) => acc + utxo.tokens, 0)
     return utxoSumSats
 }
