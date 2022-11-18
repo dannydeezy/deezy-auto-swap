@@ -4,6 +4,7 @@ const {
     getNode,
     createChainAddress,
     getChainFeeEstimate,
+    getChannelBalance,
     decodePaymentRequest
 } = require('ln-service')
 const {
@@ -59,6 +60,12 @@ async function selectChannels() {
         return
     }
     return outgoingChannels
+}
+
+async function getChainBalanceSats() {
+    const { utxos } = await lnService.getUtxos({ lnd, min_confirmations: 0 })
+    const utxoSumSats = utxos.reduce((acc, utxo) => acc + utxo.tokens, 0)
+    return utxoSumSats
 }
 
 async function getAndCheckSwapInfo() {
@@ -151,6 +158,22 @@ function abortMission() {
 }
 
 async function run() {
+    console.log(`Running auto swap`)
+
+    if (config.LN_ONCHAIN_TARGET_RATIO) {
+        const chainBalanceSats = await getChainBalanceSats()
+        console.log(`Chain balance is ${chainBalanceSats / 100000000} btc`)
+        const { channel_balance } = await getChannelBalance({ lnd })
+        console.log(`Channel balance is ${channel_balance / 100000000} btc`)
+        const currentLnOnchainRatio = channel_balance / (channel_balance + chainBalanceSats)
+        console.log(`Current LN/chain ratio is ${currentLnOnchainRatio}`)
+        if (currentLnOnchainRatio <= config.LN_ONCHAIN_TARGET_RATIO) {
+            console.log(`Current LN/chain ratio is below target of ${config.LN_ONCHAIN_TARGET_RATIO}, not swapping`)
+            return
+        }
+        console(`Current LN/chain ratio is above target of ${config.LN_ONCHAIN_TARGET_RATIO}, will try to swap`)
+    }
+
     const outgoingChannels = await selectChannels()
     console.log(`Found ${outgoingChannels.length} outgoing channels to pick from`)
 
