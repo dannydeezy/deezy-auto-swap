@@ -24,6 +24,8 @@ node index.js
 
 `LOCAL_CHANNEL_BALANCE_TARGET_RATIO` helps select which channels to swap out of. For example setting to 0.6 would mean that only channels will be used where your local balance is 60% or more of the channel capacity.
 
+`LN_ONCHAIN_TARGET_RATIO` will swap until the ratio of lightning funds to all funds is below this ratio. For example if you have 1 BTC in lightning and 1 BTC on-chain, then your current ratio is 0.5. If the config option is set to 0.4 then this would try to do swaps until your lightning ratio falls below 0.4. If your current ratio is below your target ratio, no action will be taken. Unconfirmed utxos are counted as part of the chain balance.
+
 `OUT_NODES` List of node pubkeys. Only send out of channels with these nodes. Can be used along with `LOCAL_CHANNEL_BALANCE_TARGET_RATIO` 
 
 `AVOID_NODES` List of node pubkeys. Don't send out of channels with these nodes.
