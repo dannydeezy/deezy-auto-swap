@@ -172,7 +172,7 @@ async function run() {
             console.log(`Current LN/chain ratio is below target of ${config.LN_ONCHAIN_TARGET_RATIO}, not swapping`)
             return
         }
-        console(`Current LN/chain ratio is above target of ${config.LN_ONCHAIN_TARGET_RATIO}, will try to swap`)
+        console.log(`Current LN/chain ratio is above target of ${config.LN_ONCHAIN_TARGET_RATIO}, will try to swap`)
     }
 
     const outgoingChannels = await selectChannels()
