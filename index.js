@@ -64,7 +64,12 @@ async function selectChannels() {
 }
 
 async function getChainBalanceSats() {
-    const { utxos } = await getUtxos({ lnd, min_confirmations: 0 })
+    const { utxos } = await getUtxos({ lnd, min_confirmations: 0 }).catch(err => {
+        console.log('Error fetching utxos')
+        console.error(err)
+        return {}
+    })
+    if (!utxos) return null
     const utxoSumSats = utxos.reduce((acc, utxo) => acc + utxo.tokens, 0)
     return utxoSumSats
 }
@@ -111,7 +116,12 @@ async function getOnChainFeeRateSatsPerVbyte({ address }) {
             tokens: SWAP_AMOUNT_SATS
         }],
         target_confirmations: targetConfirmations
+    }).catch(err => {
+        console.log('Error getting fee estimate from LND')
+        console.error(err)
+        return {}
     })
+    if (!tokens_per_vbyte) return null
     console.log(`Got fee estimate from LND: ${tokens_per_vbyte} sats/vbyte`)
     return tokens_per_vbyte
 }
@@ -127,6 +137,8 @@ async function prepareSwap({ deezySwapInfo }) {
     // TODO: you might want to save this address somewhere so you can keep track of it. PR's welcome :)
 
     const onChainFeeRateSatsPerVbyte = await getOnChainFeeRateSatsPerVbyte({ address })
+    if (!onChainFeeRateSatsPerVbyte) return null
+    
     const netDeezyFeePpm = (SWAP_AMOUNT_SATS * liquidity_fee_ppm / 1000000) + (onChainFeeRateSatsPerVbyte * on_chain_bytes_estimate)
     if (netDeezyFeePpm > MAX_FEE_PPM) {
         console.log(`Net deezy fee ppm is ${netDeezyFeePpm}, which is greater than MAX_FEE_PPM of ${MAX_FEE_PPM}. Not swapping.`)
@@ -163,8 +175,16 @@ async function run() {
 
     if (config.LN_ONCHAIN_TARGET_RATIO) {
         const chainBalanceSats = await getChainBalanceSats()
+        if (chainBalanceSats == null) return
+        
         console.log(`Chain balance is ${chainBalanceSats / 100000000} btc`)
-        const { channel_balance } = await getChannelBalance({ lnd })
+        const { channel_balance } = await getChannelBalance({ lnd }).catch(err => {
+            console.log('Error fetching channel balance')
+            console.error(err)
+            return {}
+        })
+        if (channel_balance == undefined) return
+
         console.log(`Channel balance is ${channel_balance / 100000000} btc`)
         const currentLnOnchainRatio = channel_balance / (channel_balance + chainBalanceSats)
         console.log(`Current LN/chain ratio is ${currentLnOnchainRatio}`)
