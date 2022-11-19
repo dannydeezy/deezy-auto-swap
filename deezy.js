@@ -1,6 +1,6 @@
 
 const axios = require('axios')
-const config = require('./config')
+const config = require('./config.json')
 
 const ENV = config.ENVIRONMENT || 'TESTNET'
 console.log(`Using environment ${ENV}`)
