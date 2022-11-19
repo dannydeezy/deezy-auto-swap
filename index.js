@@ -3,7 +3,7 @@ const {
     pay,
     getNode,
     createChainAddress,
-    getChainFeeEstimate,
+    getChainFeeRate,
     getChannelBalance,
     getUtxos,
     decodePaymentRequest
@@ -96,7 +96,7 @@ async function getAndCheckSwapInfo() {
     return deezySwapInfo
 }
 
-async function getOnChainFeeRateSatsPerVbyte({ address }) {
+async function getOnChainFeeRateSatsPerVbyte() {
     if (config.SWAP_CHAIN_SATS_PER_VBYTE) {
         console.log(`Using pre-set SWAP_CHAIN_SATS_PER_VBYTE of ${config.SWAP_CHAIN_SATS_PER_VBYTE}`)
         return config.SWAP_CHAIN_SATS_PER_VBYTE
@@ -109,13 +109,9 @@ async function getOnChainFeeRateSatsPerVbyte({ address }) {
         targetConfirmations = DEFAULT_SWAP_CHAIN_TARGET_CONFIRMATIONS
     }
     console.log(`Getting fee estimate from LND with target conf of ${targetConfirmations}`)
-    const { tokens_per_vbyte } = await getChainFeeEstimate({ 
+    const { tokens_per_vbyte } = await getChainFeeRate({ 
         lnd,
-        send_to: [{
-            address,
-            tokens: SWAP_AMOUNT_SATS
-        }],
-        target_confirmations: targetConfirmations
+        confirmation_target: targetConfirmations
     }).catch(err => {
         console.log('Error getting fee estimate from LND')
         console.error(err)
@@ -136,7 +132,7 @@ async function prepareSwap({ deezySwapInfo }) {
     console.log(`Will receive on-chain swap to address ${address}`)
     // TODO: you might want to save this address somewhere so you can keep track of it. PR's welcome :)
 
-    const onChainFeeRateSatsPerVbyte = await getOnChainFeeRateSatsPerVbyte({ address })
+    const onChainFeeRateSatsPerVbyte = await getOnChainFeeRateSatsPerVbyte()
     if (!onChainFeeRateSatsPerVbyte) return null
     
     const netDeezyFeePpm = (SWAP_AMOUNT_SATS * liquidity_fee_ppm / 1000000) + (onChainFeeRateSatsPerVbyte * on_chain_bytes_estimate)
