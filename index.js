@@ -118,8 +118,9 @@ async function getOnChainFeeRateSatsPerVbyte() {
         return {}
     })
     if (!tokens_per_vbyte) return null
-    console.log(`Got fee estimate from LND: ${tokens_per_vbyte} sats/vbyte`)
-    return tokens_per_vbyte
+    const roundedSatsPerVbyte = Math.round(tokens_per_vbyte)
+    console.log(`Got fee estimate from LND: ${tokens_per_vbyte} sats/vbyte, will round to ${roundedSatsPerVbyte}`)
+    return roundedSatsPerVbyte
 }
 
 async function prepareSwap({ deezySwapInfo }) {
@@ -135,7 +136,8 @@ async function prepareSwap({ deezySwapInfo }) {
     const onChainFeeRateSatsPerVbyte = await getOnChainFeeRateSatsPerVbyte()
     if (!onChainFeeRateSatsPerVbyte) return null
     
-    const netDeezyFeePpm = (SWAP_AMOUNT_SATS * liquidity_fee_ppm / 1000000) + (onChainFeeRateSatsPerVbyte * on_chain_bytes_estimate)
+    const netDeezyFeeSats = (SWAP_AMOUNT_SATS * liquidity_fee_ppm / 1000000) + (onChainFeeRateSatsPerVbyte * on_chain_bytes_estimate)
+    const netDeezyFeePpm = netDeezyFeeSats * 1000000 / SWAP_AMOUNT_SATS
     if (netDeezyFeePpm > MAX_FEE_PPM) {
         console.log(`Net deezy fee ppm is ${netDeezyFeePpm}, which is greater than MAX_FEE_PPM of ${MAX_FEE_PPM}. Not swapping.`)
         return null
