@@ -18,6 +18,8 @@ node index.js
 ## config
 `ENVIRONMENT` should be `"TESTNET"` or `"MAINNET"`
 
+`API_TOKEN` is your Deezy API key and can be obtained by emailing support@deezy.io (or set to `00000000000000000000000000000000` if on testnet)
+
 `SWAP_AMOUNT_SATS` is the size of the swaps you want to perform. smaller amounts should have cheaper routing fees but are less efficient per on-chain transaction.
 
 `MAX_FEE_PPM` is the max total net ppm you're willing to pay to swap. This includes both the deezy server fee and the potential routing fees required to make the payment.
