@@ -15,6 +15,7 @@ const deezyRequestConfig = config.API_TOKEN ? {
 async function getSwapInfo() {
     const response = await axios.get(`${DEEZY_URL}/v1/swap/info`, deezyRequestConfig).catch(err => {
         console.log(`Error getting swap info from Deezy: ${err.response.status} ${err.response.statusText}`)
+        console.log(err.response.data)
         return null
     })
     if (!response) return null
@@ -28,6 +29,7 @@ async function createSwap({ amount_sats, on_chain_address, on_chain_sats_per_vby
         on_chain_sats_per_vbyte
     }, deezyRequestConfig).catch(err => {
         console.log(`Error creating swap from Deezy: ${err.response.status} ${err.response.statusText}`)
+        console.log(err.response.data)
         return null
     })
     if (!response) return null
