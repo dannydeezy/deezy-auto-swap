@@ -6,8 +6,14 @@ const ENV = config.ENVIRONMENT || 'TESTNET'
 console.log(`Using environment ${ENV}`)
 const DEEZY_URL = `https://api${ENV === 'MAINNET' ? '' : `-testnet`}.deezy.io`
 
+const deezyRequestConfig = config.API_TOKEN ? {
+    headers: {
+        'x-api-token': config.API_TOKEN
+    }
+} : {}
+
 async function getSwapInfo() {
-    const response = await axios.get(`${DEEZY_URL}/v1/swap/info`).catch(err => {
+    const response = await axios.get(`${DEEZY_URL}/v1/swap/info`, deezyRequestConfig).catch(err => {
         console.log(`Error getting swap info from Deezy: ${err.response.status} ${err.response.statusText}`)
         return null
     })
@@ -20,7 +26,7 @@ async function createSwap({ amount_sats, on_chain_address, on_chain_sats_per_vby
         amount_sats,
         on_chain_address,
         on_chain_sats_per_vbyte
-    }).catch(err => {
+    }, deezyRequestConfig).catch(err => {
         console.log(`Error creating swap from Deezy: ${err.response.status} ${err.response.statusText}`)
         return null
     })
